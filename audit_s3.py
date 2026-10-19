@@ -9,3 +9,7 @@ def get_lifecycle_rules(s3, bucket: str) -> list:
         if e.response["Error"]["Code"] == "NoSuchLifecycleConfiguration":
             return []
         raise
+
+
+def has_abort_multipart(rules: list) -> bool:
+    return any(r.get("Status") == "Enabled" and "AbortIncompleteMultipartUpload" in r for r in rules)
