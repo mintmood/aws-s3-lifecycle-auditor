@@ -16,3 +16,7 @@ class TestAuditS3(unittest.TestCase):
     def test_has_abort_multipart(self):
         self.assertTrue(audit_s3.has_abort_multipart([{"Status": "Enabled", "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": 7}}]))
         self.assertFalse(audit_s3.has_abort_multipart([{"Status": "Disabled", "AbortIncompleteMultipartUpload": {"DaysAfterInitiation": 7}}]))
+
+    def test_has_noncurrent_expiration(self):
+        self.assertTrue(audit_s3.has_noncurrent_expiration([{"Status": "Enabled", "NoncurrentVersionExpiration": {"NoncurrentDays": 90}}]))
+        self.assertFalse(audit_s3.has_noncurrent_expiration([]))
