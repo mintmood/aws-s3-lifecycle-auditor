@@ -25,6 +25,7 @@ def has_noncurrent_expiration(rules: list) -> bool:
 def main():
     p = argparse.ArgumentParser(description="Audit S3 buckets for lifecycle & multipart cleanup rules")
     p.add_argument("--prefix", default="", help="Filter bucket names by prefix")
+    p.add_argument("--only-missing", action="store_true", help="Show only buckets missing abort-mpu")
     p.add_argument("--json", action="store_true", help="Output JSON")
     args = p.parse_args()
     s3 = boto3.client("s3")
@@ -34,10 +35,13 @@ def main():
         if args.prefix and not name.startswith(args.prefix):
             continue
         rules = get_lifecycle_rules(s3, name)
+        abort_mpu = has_abort_multipart(rules)
+        if args.only_missing and abort_mpu:
+            continue
         results.append({
             "bucket": name,
             "rules": len(rules),
-            "abort_mpu": has_abort_multipart(rules),
+            "abort_mpu": abort_mpu,
             "noncurrent_expire": has_noncurrent_expiration(rules),
         })
     if args.json:
