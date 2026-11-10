@@ -6,5 +6,6 @@ Small CLI to audit S3 buckets for missing lifecycle rules (`AbortIncompleteMulti
 
 ```bash
 pip install -r requirements.txt
-python3 audit_s3.py --json
+python3 audit_s3.py --only-missing --json
+python3 audit_s3.py --prefix prod-
 ```
